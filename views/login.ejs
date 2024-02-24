@@ -1,0 +1,335 @@
+
+<html lang="en" dir="ltr">
+   <head>
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://ajax.googleapis.com https://cdnjs.cloudflare.com 'nonce-<%= nonce %>'; style-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com">
+
+
+
+
+    
+
+
+    <style> 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+html,body{
+  display: grid;
+  height: 100%;
+  width: 100%;
+  place-items: center;
+  background: #f2f2f2;
+  /* background: linear-gradient(-135deg, #c850c0, #4158d0); */
+}
+::selection{
+  background: #4158d0;
+  color: #fff;
+}
+.wrapper{
+  width: 380px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
+}
+.wrapper .title{
+  font-size: 35px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 100px;
+  color: #fff;
+  user-select: none;
+  border-radius: 15px 15px 0 0;
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+}
+.wrapper form{
+  padding: 10px 30px 50px 30px;
+}
+.wrapper form .field{
+  height: 50px;
+  width: 100%;
+  margin-top: 20px;
+  position: relative;
+}
+.wrapper form .field input{
+  height: 100%;
+  width: 100%;
+  outline: none;
+  font-size: 17px;
+  padding-left: 20px;
+  border: 1px solid lightgrey;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+.wrapper form .field input:focus,
+form .field input:valid{
+  border-color: #4158d0;
+}
+.wrapper form .field label{
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  color: #999999;
+  font-weight: 400;
+  font-size: 17px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: all 0.3s ease;
+}
+form .field input:focus ~ label,
+form .field input:valid ~ label{
+  top: 0%;
+  font-size: 16px;
+  color: #4158d0;
+  background: #fff;
+  transform: translateY(-50%);
+}
+form .content{
+  display: flex;
+  width: 100%;
+  height: 50px;
+  font-size: 16px;
+  align-items: center;
+  justify-content: space-around;
+}
+form .content .checkbox{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+form .content input{
+  width: 15px;
+  height: 15px;
+  background: red;
+}
+form .content label{
+  color: #262626;
+  user-select: none;
+  padding-left: 5px;
+}
+form .content .pass-link{
+  color: "";
+}
+form .field input[type="submit"]{
+  color: #fff;
+  border: none;
+  padding-left: 0;
+  margin-top: -10px;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  transition: all 0.3s ease;
+}
+form .field input[type="submit"]:active{
+  transform: scale(0.95);
+}
+form .signup-link{
+  color: #262626;
+  margin-top: 20px;
+  text-align: center;
+}
+form .pass-link a,
+form .signup-link a{
+  color: #4158d0;
+  text-decoration: none;
+}
+form .pass-link a:hover,
+form .signup-link a:hover{
+  text-decoration: underline;
+}
+    </style>
+
+ 
+
+      <meta charset="utf-8">
+      <title>Login Form Design | CodeLab</title>
+     
+   </head>
+   <body>
+      <div class="wrapper">
+         <div class="title">
+            Login Form
+         </div>
+         <form id="loginForm">
+
+            <div class="alert alert-danger d-none" id="messageDiv" role="alert">
+               
+            </div>
+            <div class="alert alert-success d-none" id="messageDivSucc" role="alert">
+                
+            </div>
+
+
+            <div class="field">
+                
+               <input type="text" name="nic" id="nic" required>
+               <label>Enter your NIC</label>
+            </div>
+
+            <div class="field">
+               <input type="password" name="password" id="password" required>
+               <label>Password</label>
+            </div>
+            <div class="content">
+               <div class="checkbox">
+                  <input type="checkbox" id="remember-me">
+                  <label for="remember-me">Remember me</label>
+               </div>
+               <div class="pass-link">
+                  <a href="#">Forgot password?</a>
+               </div>
+            </div>
+            <div class="field">
+               <input type="submit">
+            </div>
+            <div class="signup-link">
+               Not a member? <a href="#">Signup now</a>
+            </div>
+         </form>
+      </div>
+
+      <script nonce="<%= nonce %>">
+        
+
+        document.addEventListener('DOMContentLoaded', () => {
+                const loginForm = document.getElementById('loginForm');
+                const messageDiv = document.getElementById('messageDiv');
+                const messageDivsucc = document.getElementById('messageDivSucc');
+                let gettoken;
+    
+                
+        loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(loginForm);
+
+
+            // Create an object to store the form data
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+            formDataObject[key] = value;
+        });
+
+
+        // Create request options
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+            
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formDataObject).toString(),
+        };
+
+
+        try {
+            const response = await fetch('/auth/login', requestOptions)
+
+
+            if (response.ok) {
+                    // Successfully logged in
+
+                    const data = await response.json();
+                    console.log(data.redirectUrl);
+                    //gettoken=data.token;
+                    //enable message box
+                    messageDivsucc.classList.remove('d-none');
+                    messageDivsucc.textContent = data.message;
+
+                    if (data.redirectUrl) {
+                        // Redirect to the specified URL
+                        //window.location.href = '/auth/dashboard';
+
+
+
+                        const postData = {
+                          key1: 'value1',
+                          key2: 'value2',
+                        };
+
+                        // Create an XMLHttpRequest object
+                        const xhr = new XMLHttpRequest();
+
+                      // Configure the POST request
+                      xhr.open('POST', data.redirectUrl, true);
+                      xhr.setRequestHeader('Content-Type', 'application/json');
+
+                      // Handle the response when the request completes
+                      xhr.onload = function() {
+                        if (xhr.status === 200) {
+                          // Request was successful, handle the response
+
+                          window.location.href = data.redirectUrl;
+
+                          //const response = JSON.parse(xhr.responseText);
+                          //console.log(response);
+                          
+                        } else {
+                          // Request failed
+                          console.error('POST request failed with status:', xhr.status);
+                        }
+                      };
+
+                      // Handle network errors
+                      xhr.onerror = function() {
+                        console.error('Network error occurred');
+                      };
+
+                      // Send the POST request with the JSON data
+                      xhr.send(JSON.stringify(postData));
+
+
+
+
+
+
+                    } else {
+                        console.log("No Redirect URL Found!");
+                    }
+                } else {
+                    // Handle login failure (e.g., show an error message)
+                    console.log("Response is not there");
+                }
+
+            console.log(response);
+            if(response.status==200){
+
+
+                
+                //const data = await response.json();
+                console.log(data.message);
+                
+                
+                console.log(response.url);
+                window.location.href = response.url;
+
+            }else{
+                
+                messageDiv.classList.remove('d-none');
+                messageDiv.textContent = data.message;
+            }
+            
+            // if (response.ok) {
+                
+                
+            // } else {
+                
+            // }
+        } catch (error) {
+            console.log('Error:'+ error);
+            messageDiv.textContent = 'An error occurred. Please try again later.';
+        }
+    });
+});
+
+
+
+
+
+    </script>
+   </body>
+</html>
